@@ -1,0 +1,56 @@
+import React, { useState } from "react";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Send } from "lucide-react";
+
+const Chatbot = () => {
+  const [messages, setMessages] = useState([
+    { text: "Hi! I'm FitBot. How can I help you today?", sender: "bot" }
+  ]);
+  const [input, setInput] = useState("");
+
+  const handleSend = () => {
+    if (!input.trim()) return;
+    const userMessage = { text: input, sender: "user" };
+    setMessages((prev) => [...prev, userMessage]);
+    setInput("");
+    
+    setTimeout(() => {
+      const botReply = generateBotReply(input);
+      setMessages((prev) => [...prev, botReply]);
+    }, 1000);
+  };
+
+  const generateBotReply = (message) => {
+    let response = "I'm not sure about that. Can you ask in a different way?";
+    if (message.toLowerCase().includes("measure")) {
+      response = "To measure your body, stand straight and follow the on-screen guide.";
+    } else if (message.toLowerCase().includes("size")) {
+      response = "I can recommend the best size based on your measurements. Have you taken them yet?";
+    }
+    return { text: response, sender: "bot" };
+  };
+
+  return (
+    <Card className="w-96 p-4 border rounded-2xl shadow-lg">
+      <CardContent className="h-80 overflow-y-auto space-y-2">
+        {messages.map((msg, index) => (
+          <div key={index} className={`p-2 rounded-lg ${msg.sender === "bot" ? "bg-gray-200" : "bg-blue-500 text-white"}`}>{msg.text}</div>
+        ))}
+      </CardContent>
+      <div className="flex mt-2 gap-2">
+        <Input
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          placeholder="Ask me about body measurements..."
+        />
+        <Button onClick={handleSend} className="bg-blue-600 text-white p-2 rounded-xl">
+          <Send size={16} />
+        </Button>
+      </div>
+    </Card>
+  );
+};
+
+export default Chatbot;
